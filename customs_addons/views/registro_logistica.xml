@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Definición del campo personalizado -->
+        <record id="product_template_registro_logistica_field" model="ir.model.fields">
+            <field name="name">x_registro_logistica</field>
+            <field name="model">product.template</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="field_description">Registro Logística</field>
+            <field name="ttype">date</field>
+            <field name="required" eval="False"/>
+            <field name="readonly" eval="False"/>
+            <field name="store" eval="True"/>
+        </record>
+
+        <!-- Vista heredada del formulario -->
+        <record id="product_template_form_view_inherit_date" model="ir.ui.view">
+            <field name="name">product.template.form.inherit.date</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Adicionando campo de data após categoria -->
+                <field name="categ_id" position="after">
+                    <field name="x_registro_logistica" string="Registro Logistica" widget="date"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Opcional: Agregar el campo también en la vista de lista -->
+        <record id="product_template_tree_view_inherit" model="ir.ui.view">
+            <field name="name">product.template.tree.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="after">
+                    <field name="x_registro_logistica" string="Registro Logistica" optional="hide"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Opcional: Agregar el campo en la vista de búsqueda -->
+        <record id="product_template_search_view_inherit" model="ir.ui.view">
+            <field name="name">product.template.search.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="after">
+                    <field name="x_registro_logistica"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
