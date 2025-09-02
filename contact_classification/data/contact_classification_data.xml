@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Clasificaciones por defecto -->
+        <record id="classification_client" model="contact.classification">
+            <field name="name">Cliente</field>
+            <field name="code">client</field>
+            <field name="sequence">1</field>
+            <field name="color">1</field>
+            <field name="description">Contacto clasificado como cliente</field>
+        </record>
+
+        <record id="classification_supplier" model="contact.classification">
+            <field name="name">Proveedor</field>
+            <field name="code">supplier</field>
+            <field name="sequence">2</field>
+            <field name="color">2</field>
+            <field name="description">Contacto clasificado como proveedor</field>
+        </record>
+
+        <record id="classification_director" model="contact.classification">
+            <field name="name">Director</field>
+            <field name="code">director</field>
+            <field name="sequence">3</field>
+            <field name="color">3</field>
+            <field name="description">Contacto clasificado como director</field>
+        </record>
+
+        <record id="classification_employee" model="contact.classification">
+            <field name="name">Funcionario</field>
+            <field name="code">employee</field>
+            <field name="sequence">4</field>
+            <field name="color">4</field>
+            <field name="description">Contacto clasificado como funcionario</field>
+        </record>
+
+        <record id="classification_salesperson" model="contact.classification">
+            <field name="name">Vendedor</field>
+            <field name="code">salesperson</field>
+            <field name="sequence">5</field>
+            <field name="color">5</field>
+            <field name="description">Contacto clasificado como vendedor</field>
+        </record>
+
+        <record id="classification_carrier" model="contact.classification">
+            <field name="name">Transportadora</field>
+            <field name="code">carrier</field>
+            <field name="sequence">6</field>
+            <field name="color">6</field>
+            <field name="description">Contacto clasificado como transportadora</field>
+        </record>
+
+        <record id="classification_bank" model="contact.classification">
+            <field name="name">Banco</field>
+            <field name="code">bank</field>
+            <field name="sequence">7</field>
+            <field name="color">7</field>
+            <field name="description">Contacto clasificado como banco</field>
+        </record>
+
+        <record id="classification_other" model="contact.classification">
+            <field name="name">Otros</field>
+            <field name="code">other</field>
+            <field name="sequence">8</field>
+            <field name="color">8</field>
+            <field name="description">Contacto con clasificación especial</field>
+        </record>
+    </data>
+</odoo>

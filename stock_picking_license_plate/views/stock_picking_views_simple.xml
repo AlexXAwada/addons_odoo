@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Versión simple - agrega una nueva pestaña -->
+    <record id="view_picking_form_license_plate_simple" model="ir.ui.view">
+        <field name="name">stock.picking.form.license.plate.simple</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Transport"
+                      attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'incoming'])]}">
+                    <group>
+                        <group string="Vehicle &amp; Driver">
+                            <field name="license_plate"/>
+                            <field name="driver_name"/>
+                            <field name="driver_doc"/>
+                            <field name="carrier_name"/>
+                            <field name="vat_number"/>
+                        </group>
+                        <group string="Notes">
+                            <field name="transport_notes" nolabel="1"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_picking_tree_license_plate" model="ir.ui.view">
+        <field name="name">stock.picking.tree.license.plate</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="license_plate" optional="hide"/>
+                <field name="driver_name" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_picking_search_license_plate" model="ir.ui.view">
+        <field name="name">stock.picking.search.license.plate</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="license_plate"/>
+                <field name="driver_name"/>
+                <field name="carrier_name"/>
+            </field>
+            <group position="inside">
+                <filter string="Has License Plate" name="has_license_plate"
+                        domain="[('license_plate', '!=', False)]"/>
+                <filter string="Missing License Plate" name="missing_license_plate"
+                        domain="[('license_plate', '=', False), ('picking_type_code', '=', 'outgoing')]"/>
+            </group>
+        </field>
+    </record>
+
+</odoo>
