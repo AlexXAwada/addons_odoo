@@ -1,85 +1,61 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    license_plate = fields.Char(
-        string='License Plate',
-        help='Vehicle license plate for this transfer',
-        tracking=True,
-        size=20
+    # Campos existentes
+    license_plate = fields.Char(string='License Plate')
+    driver_name = fields.Char(string='Driver Name')
+    driver_doc = fields.Char(string='Document of the Driver')
+    carrier_name = fields.Char(string='Carrier Name')
+    vat_number = fields.Char(string='VAT Number')
+    transport_notes = fields.Text(string='Transport Notes')
+
+    # Nuevo campo para el contacto transportadora
+    carrier_partner_id = fields.Many2one(
+        'res.partner',
+        string='Carrier Partner',
+        domain="[('is_carrier', '=', True)]",
+        help='Select a partner with Carrier classification'
     )
 
-    driver_name = fields.Char(
-        string='Driver Name',
-        help='Name of the driver',
-        tracking=True,
-        size=100
-    )
+    @api.onchange('carrier_partner_id')
+    def _onchange_carrier_partner_id(self):
+        """Auto-fill carrier info when partner is selected"""
+        if self.carrier_partner_id:
+            self.carrier_name = self.carrier_partner_id.name
+            # Usar el VAT del partner, o si no tiene, usar el campo de identificación
+            self.vat_number = self.carrier_partner_id.vat or ''
+            if not self.vat_number and hasattr(self.carrier_partner_id, 'l10n_latam_identification_type_id'):
+                identification = self.carrier_partner_id.l10n_latam_identification_type_id
+                if identification:
+                    self.vat_number = identification.name
+        else:
+            # Limpiar campos si se deselecciona el partner
+            self.carrier_name = False
+            self.vat_number = False
 
-    driver_doc = fields.Char(
-        string='Document of the Driver',
-        help='Document ID of the driver (e.g., ID card, license)',
-        tracking=True,
-        size=100
-    )
-
-    carrier_name = fields.Char(
-        string='Carrier Name',
-        help='Name of the transport carrier',
-        tracking=True,
-        size=100
-    )
-    vat_number = fields.Char(
-        string='CNPJ/CPF OR RUC',
-        help='CNPJ/CPF for Brazil or RUC for Paraguay of the carrier',
-        tracking=True,
-        size=100
-    )
-
-    transport_notes = fields.Text(
-        string='Transport Notes',
-        help='Additional notes about the transport'
-    )
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        # Formatear la placa antes de crear el registro
-        for vals in vals_list:
-            if 'license_plate' in vals and vals['license_plate']:
-                vals['license_plate'] = vals['license_plate'].replace(' ', '').upper()
-        return super().create(vals_list)
+    @api.model
+    def create(self, vals):
+        """Override create to ensure carrier info is saved"""
+        if 'carrier_partner_id' in vals and vals['carrier_partner_id']:
+            partner = self.env['res.partner'].browse(vals['carrier_partner_id'])
+            if partner:
+                if not vals.get('carrier_name'):
+                    vals['carrier_name'] = partner.name
+                if not vals.get('vat_number'):
+                    vals['vat_number'] = partner.vat or ''
+        return super().create(vals)
 
     def write(self, vals):
-        # Formatear la placa antes de escribir
-        if 'license_plate' in vals and vals['license_plate']:
-            vals['license_plate'] = vals['license_plate'].replace(' ', '').upper()
+        """Override write to ensure carrier info is updated"""
+        if 'carrier_partner_id' in vals:
+            if vals['carrier_partner_id']:
+                partner = self.env['res.partner'].browse(vals['carrier_partner_id'])
+                if partner:
+                    vals['carrier_name'] = partner.name
+                    vals['vat_number'] = partner.vat or ''
+            else:
+                vals['carrier_name'] = False
+                vals['vat_number'] = False
         return super().write(vals)
-
-    @api.constrains('license_plate')
-    def _check_license_plate_format(self):
-        """Validate license plate format if needed"""
-        for record in self:
-            if record.license_plate:
-                # Solo validar, NO modificar aquí
-                # Agregar validaciones adicionales si es necesario
-                if len(record.license_plate) < 3:
-                    raise ValidationError(_('License plate must be at least 3 characters long.'))
-
-                # Validar que solo contenga caracteres alfanuméricos
-                import re
-                if not re.match(r'^[A-Z0-9]+$', record.license_plate):
-                    raise ValidationError(_('License plate can only contain letters and numbers.'))
-
-    def button_validate(self):
-        """Override validate to check license plate requirement"""
-        # Check if license plate is required for outgoing pickings
-        require_license = self.env['ir.config_parameter'].sudo().get_param(
-            'stock_license_plate.require_license_plate', default=False
-        )
-
-        if require_license and self.picking_type_code == 'outgoing' and not self.license_plate:
-            raise ValidationError(_('License plate is required for delivery orders.'))
-
-        return super().button_validate()
