@@ -1,0 +1,57 @@
+<!-- views/stock_picking_views.xml -->
+<odoo>
+
+    <data>
+        <!-- Extensión de la vista de formulario para agregar la pestaña Logística -->
+        <record id="view_picking_form_logistics" model="ir.ui.view">
+            <field name="name">stock.picking.form.logistics</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <!-- Agregar la pestaña después de las pestañas existentes -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Logística" name="logistics_tab">
+                        <group>
+                            <group string="Información de Transporte">
+                                <field name="via_transporte"/>
+                                <field name="contenedor_chapa"/>
+                                <field name="numero_embarque"/>
+                                <field name="estado_logistico"/>
+                            </group>
+                            <group string="Fechas de Seguimiento">
+                                <field name="etd_fecha"/>
+                                <field name="eta_transbordo_fecha"/>
+                                <field name="eta_aduana_fecha"/>
+                            </group>
+                        </group>
+                        <group string="Observaciones">
+                            <field name="notas_logisticas" nolabel="1" placeholder="Ingrese aquí las notas y observaciones logísticas..."/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Opcional: Agregar los campos también en la vista de lista/tree para acceso rápido -->
+        <!-- Comentado temporalmente debido a que el ID puede variar según la versión de Odoo -->
+
+        <record id="view_picking_tree_logistics" model="ir.ui.view">
+            <field name="name">stock.picking.tree.logistics</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="via_transporte" optional="hide"/>
+                    <field name="estado_logistico" optional="hide"/>
+                    <field name="numero_embarque" optional="hide"/>
+                <!--
+                    <field name="etd_fecha" optional="hide"/>
+                    <field name="eta_aduana_fecha" optional="hide"/>
+
+                -->
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

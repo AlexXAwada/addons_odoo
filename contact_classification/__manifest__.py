@@ -16,6 +16,7 @@
     'author': 'FFA-DEV, Alexandre Awada',
     'category': 'Contacts',
     'depends': ['base', 'contacts'],
+    'license': 'AGPL-3',
     'data': [
         'security/ir.model.access.csv',
         'data/contact_classification_data.xml',

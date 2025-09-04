@@ -1,6 +1,6 @@
 {
     'name': 'Stock Picking License Plate',
-    'version': '15.0.1.0.0',
+    'version': '15.0.2.0.0',
     'category': 'Inventory',
     'depends': ['base','stock'],
     'author': 'FFA-DEV, Alexandre Awada',
